@@ -65,6 +65,10 @@ Token* tok_next(Tokenizer *state) {
 				type = TOK_CLOSE_PAREN;
 				goto out;
 			}
+			else if (c == '.') {
+				type = TOK_DOT;
+				goto out;
+			}
 			else if (isdigit(c)) {
 				type = TOK_NUMBER;
 			}

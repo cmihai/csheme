@@ -100,7 +100,8 @@ Obj* eval(Scope* scope, Obj *node) {
 			}
 		} while (current->type != SYN_NIL);
 
-		return apply(scope, head);
+		result = apply(scope, head);
+		return result;
 	}
 
 	INCREF(node);

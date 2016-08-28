@@ -10,6 +10,7 @@ typedef struct {
 typedef enum {
 	TOK_UNDEF = 0,
 	TOK_END,
+	TOK_DOT,
 	TOK_OPEN_PAREN,
 	TOK_CLOSE_PAREN,
 	TOK_NUMBER,

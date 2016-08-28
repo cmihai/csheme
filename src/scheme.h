@@ -50,7 +50,6 @@ static inline bool CONSP(Obj *obj) {
 static inline bool SYMBOLP(Obj *obj) {
 	return (obj != NULL && obj->type == SYN_SYMBOL);
 }
-
 static inline Obj* CONS(Obj *left, Obj *right) {
 	Obj *pair = syn_alloc();
 	pair->type = SYN_PAIR;

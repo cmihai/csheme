@@ -54,6 +54,10 @@ Obj* syn_next(Tokenizer *tok_state) {
 	case TOK_OPEN_PAREN:
 		node = syn_read_list(tok_state);
 		break;
+	case TOK_DOT:
+		node = syn_next(tok_state);
+		syn_next(tok_state); // Ignore close-paren
+		break;
 	case TOK_CLOSE_PAREN:
 		break;
 	case TOK_BOOLEAN:
@@ -92,7 +96,7 @@ Obj* syn_read_list(Tokenizer *tok_state) {
 	Obj *last = NULL;
 	Obj *node;
 	Obj *next;
-	
+
 	do {
 		next = syn_next(tok_state);
 		if (next == NULL) {
@@ -156,4 +160,47 @@ void syn_print(Obj *node) {
 		printf(")");
 		break;
 	}
+}
+
+int  syn_sprint(Obj *node, char* buf) {
+	if (node == NULL) {
+		return sprintf(buf, "<NULL>");
+	}
+
+	switch (node->type) {
+	case SYN_NIL:
+		return sprintf(buf, "()");
+		break;
+	case SYN_NUMBER:
+		return sprintf(buf, "%d", node->value.num);
+		break;
+	case SYN_SYMBOL:
+		return sprintf(buf, "'%s", node->value.str);
+		break;
+	case SYN_BOOLEAN:
+		if (node->value.num) {
+			printf("#t");
+		}
+		else {
+			printf("#f");
+		}
+		break;
+	case SYN_PAIR:
+	{
+		int cnt = 0;
+		cnt += sprintf(buf, "(");
+		while (node->type != SYN_NIL) {
+			cnt += syn_sprint(node->value.left, buf + cnt);
+			node = node->value.right;
+			if (node->type != SYN_NIL)
+			{
+				cnt += sprintf(buf + cnt, " ");
+			}
+		}
+		cnt += sprintf(buf + cnt, ")");
+		return cnt;
+	}
+	}
+
+	return 0;
 }

@@ -27,6 +27,8 @@ typedef struct Obj_ {
 
 void syn_print(Obj *node);
 
+int syn_sprint(Obj *node, char* buf);
+
 Obj* syn_next(Tokenizer *tok_state);
 
 Obj *syn_alloc();
