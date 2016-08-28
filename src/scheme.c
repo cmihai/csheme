@@ -70,13 +70,18 @@ Obj* eval(Scope* scope, Obj *node) {
 				}
 				return result;
 			}
-			if (!strcmp(CAR(node)->value.str, "define")) {
+			else if (!strcmp(CAR(node)->value.str, "quote")) {
+				result = ARG1(node);
+				INCREF(result);
+				return result;
+			}
+			else if (!strcmp(CAR(node)->value.str, "define")) {
 				const char *varname = ARG1(node)->value.str;
 				Obj *val = ARG2(node);
 				node = scope_add(scope, varname, eval(scope, val));
 				break;
 			}
-			if (!strcmp(CAR(node)->value.str, "lambda")) {
+			else if (!strcmp(CAR(node)->value.str, "lambda")) {
 				break;
 			}
 		}
@@ -144,6 +149,16 @@ Obj* apply(Scope* scope, Obj *node) {
 		result = syn_alloc();
 		result->type = SYN_BOOLEAN;
 		result->value.num = NILP(ARG1(node));
+	}
+	else if (!strcmp(CAR(node)->value.str, "car")) {
+		result = CAR(ARG1(node));
+		INCREF(result);
+		return result;
+	}
+	else if (!strcmp(CAR(node)->value.str, "cdr")) {
+		result = CDR(ARG1(node));
+		INCREF(result);
+		return result;
 	}
 	else if (!strcmp(CAR(node)->value.str, "cons")) {
 		return CONS(ARG1(node), ARG2(node));
