@@ -36,6 +36,10 @@ Token* tok_next(Tokenizer *state) {
 
 	while (true) {
 		char c = fgetc(state->f);
+		if (feof(state->f)) {
+			type = TOK_END;
+			break;
+		}
 		if (isspace(c)) {
 			if (type == TOK_UNDEF) {
 				continue;

@@ -49,6 +49,8 @@ Obj* syn_next(Tokenizer *tok_state) {
 	Obj *node = NULL;
 
 	switch (tok->type) {
+	case TOK_END:
+		break;
 	case TOK_OPEN_PAREN:
 		node = syn_read_list(tok_state);
 		break;

@@ -15,6 +15,10 @@ int main() {
 		fflush(stdout);
 
 		Obj *t = syn_next(state);
+		if (t == NULL) {
+			break;
+		}
+
 		Obj *result = eval(scope, t);
 		DECREF(t);
 		syn_print(result);
