@@ -32,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="runtime.scm" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{32F960CC-12CD-4455-8734-7D7C8545939E}</ProjectGuid>

@@ -7,14 +7,31 @@
 const char *PROMPT = "> ";
 
 int main() {
-	Tokenizer *state = tok_init();
 	Scope* scope = scope_init(NULL);
 
+	// Load runtime
+	FILE* runtime = fopen("runtime.scm", "rt");
+	if (runtime) {
+		Tokenizer *rtk = tok_init(runtime);
+		while (true) {
+			Obj *t = syn_next(rtk);
+			if (t == NULL) {
+				break;
+			}
+			Obj *result = eval(scope, t);
+			DECREF(t);
+			DECREF(result);
+		}
+		tok_deinit(rtk);
+		fclose(runtime);
+	}
+
+	Tokenizer *tok = tok_init(stdin);
 	while (true) {
 		printf(PROMPT);
 		fflush(stdout);
 
-		Obj *t = syn_next(state);
+		Obj *t = syn_next(tok);
 		if (t == NULL) {
 			break;
 		}
@@ -25,6 +42,7 @@ int main() {
 		printf("\n");
 		DECREF(result);
 	}
+	tok_deinit(tok);
 
 	return 0;
 }

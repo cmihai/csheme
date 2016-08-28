@@ -5,10 +5,14 @@
 
 #include "tokenizer.h"
 
-Tokenizer* tok_init() {
+Tokenizer* tok_init(FILE *f) {
 	Tokenizer *state = malloc(sizeof(Tokenizer));
-	state->f = stdin;
+	state->f = f ? f : stdin;
 	return state;
+}
+
+void tok_deinit(Tokenizer *t) {
+	free(t);
 }
 
 Token* tok_alloc(TokenType type, const char *val) {
