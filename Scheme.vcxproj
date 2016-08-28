@@ -30,6 +30,9 @@
     <ClInclude Include="src\tokenizer.h" />
     <ClInclude Include="src\util.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{32F960CC-12CD-4455-8734-7D7C8545939E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

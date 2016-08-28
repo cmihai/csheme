@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "scheme.h"
 #include "syntax.h"
 #include "util.h"
@@ -68,10 +70,6 @@ Obj* eval(Scope* scope, Obj *node) {
 				}
 				return result;
 			}
-			if (!strcmp(CAR(node)->value.str, "cons")) {
-				result = CONS(ARG1(node), ARG2(node));
-				return result;
-			}
 			if (!strcmp(CAR(node)->value.str, "define")) {
 				const char *varname = ARG1(node)->value.str;
 				Obj *val = ARG2(node);
@@ -105,6 +103,7 @@ Obj* eval(Scope* scope, Obj *node) {
 }
 
 Obj* apply(Scope* scope, Obj *node) {
+	Obj* result = NULL;
 	const char *sym = CAR(node)->value.str;
 
 	if (!strcmp(sym, "+")) {
@@ -116,9 +115,9 @@ Obj* apply(Scope* scope, Obj *node) {
 			node = CDR(node);
 		}
 
-		node = syn_alloc();
-		node->type = SYN_NUMBER;
-		node->value.num = sum;
+		result = syn_alloc();
+		result->type = SYN_NUMBER;
+		result->value.num = sum;
 	}
 	else if (!strcmp(sym, "-")) {
 		int diff = ARG1(node)->value.num;
@@ -129,26 +128,43 @@ Obj* apply(Scope* scope, Obj *node) {
 			node = CDR(node);
 		}
 
-		node = syn_alloc();
-		node->type = SYN_NUMBER;
-		node->value.num = diff;
+		result = syn_alloc();
+		result->type = SYN_NUMBER;
+		result->value.num = diff;
 	}
 	else if (!strcmp(sym, "=")) {
 		int n1 = ARG1(node)->value.num;
 		int n2 = ARG2(node)->value.num;
 
-		node = syn_alloc();
-		node->type = SYN_NUMBER;
-		node->value.num = (n1 == n2);
+		result = syn_alloc();
+		result->type = SYN_BOOLEAN;
+		result->value.num = (n1 == n2);
+	}
+	else if (!strcmp(CAR(node)->value.str, "null?")) {
+		result = syn_alloc();
+		result->type = SYN_BOOLEAN;
+		result->value.num = NILP(ARG1(node));
+	}
+	else if (!strcmp(CAR(node)->value.str, "cons")) {
+		return CONS(ARG1(node), ARG2(node));
 	}
 	else if (CAR(node)->type == SYN_PAIR && !strcmp(CAR(CAR(node))->value.str, "lambda")) {
 		Obj *lambda = CAR(node);
 
-		// Create nvew scope
+		// Create new scope
 		Scope *s = scope_init(scope);
 
-		Obj *vars = ARG1(lambda);
-		Obj *vals = CDR(node);
+		Obj *vals;
+		Obj *vars;
+
+		if (SYMBOLP(ARG1(lambda))) {
+			vars = CONS(ARG1(lambda), syn_alloc());
+			vals = CONS(CDR(node), syn_alloc());
+		}
+		else {
+			vars = ARG1(lambda);
+			vals = CDR(node);
+		}
 
 		while (!NILP(vars) && !NILP(vals)) {
 			INCREF(CAR(vals));
@@ -156,12 +172,13 @@ Obj* apply(Scope* scope, Obj *node) {
 			vars = CDR(vars);
 			vals = CDR(vals);
 		}
-		 
+
 		// Execute lambda
-		Obj *result = eval(s, ARG2(lambda));
+		result = eval(s, ARG2(lambda));
 		scope_free(s);
-		return result;
 	}
 
-	return node;
+	assert(result != NULL);
+
+	return result;
 }

@@ -41,9 +41,14 @@ static inline Obj* ARG3(Obj *pair) {
 static inline Obj* ARG4(Obj *pair) {
 	return CAR(CDR(CDR(CDR(CDR(pair)))));
 }
-
 static inline bool NILP(Obj *obj) {
 	return (obj != NULL && obj->type == SYN_NIL);
+}
+static inline bool CONSP(Obj *obj) {
+	return (obj != NULL && obj->type == SYN_PAIR);
+}
+static inline bool SYMBOLP(Obj *obj) {
+	return (obj != NULL && obj->type == SYN_SYMBOL);
 }
 
 static inline Obj* CONS(Obj *left, Obj *right) {
